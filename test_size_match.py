@@ -2,25 +2,23 @@ import numpy as np
 import cv2
 
 """
-TODO: 
-Might use a block to find the best aspect ratio 
-Write for loop for several rotations
-	10 degrees?
-Normalize the average brightness of the image?
-	binarizing the image works for now
+Uses OpenCVs matchTemplate to find the emoticon in the image out of several possible emoicons
+Initially runs matchTemplate on several scaled versions of an emoticon before preserving
+	the size of the emoticon image that returned the best match
+Then runs matchTemplate with each emoticon with the predicted image dimensions
 """
 
-#TEMP FIX
+#Test emoticon
 emoticonPath = 'Emojis/1.png'
 template = cv2.imread(emoticonPath)
 
 #TEMP Taken image goes here
-imagePath = 'sheet1.jpg'
+imagePath = 'testimg4.jpg'
 image = cv2.imread(imagePath)
 imageColor = cv2.imread(imagePath)
 
 #Resize image taken and preserve image ratio
-width = 400.0
+width = 800.0
 r = float(width) / image.shape[1]
 dim = (int(width), int(image.shape[0] * r))
 image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
@@ -46,27 +44,23 @@ for i in range(int(width)/10,int(width)/5,int(width)/100):
 		min_val0, max_val0, min_loc0, max_loc0 = cv2.minMaxLoc(result) # Located Region
 		top_left = max_loc0
 		bottom_right = (top_left[0] + w, top_left[1] + h)
-cv2.rectangle(imageColor,top_left, bottom_right,(0,255,0),6)
-
-space = 0
-imageCropped = imageThresh[top_left[1] - h : bottom_right[1] + h,
-				top_left[0] - w : bottom_right[0] + w]
-
-# imageCropped[0] = [0 for x in range(len(imageCropped[0]))]
-# print imageThresh[0]
-cv2.imshow("Locally Searched Area",imageCropped)
+# cv2.rectangle(imageColor,top_left, bottom_right,(0,255,0),6)
+imageCropped = imageThresh[top_left[1] : bottom_right[1],
+				top_left[0] : bottom_right[0]]
+cv2.imshow("Found Area",imageCropped)
 
 max_val = 0
+
 for i in range(1, 16):
 	emoticonPath = 'Emojis/' + str(i) + '.png'
+
 	template = cv2.imread(emoticonPath)
 	template = cv2.resize(template, bestDim, interpolation = cv2.INTER_AREA)
 	templateGrey = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
 	h,w = templateGrey.shape
 
 	templateThres = cv2.adaptiveThreshold(templateGrey, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 17, 10)
-	# result = cv2.matchTemplate(imageThresh,templateThres, cv2.TM_CCOEFF)
-	result = cv2.matchTemplate(imageCropped,templateThres, cv2.TM_CCOEFF)
+	result = cv2.matchTemplate(imageThresh,templateThres, cv2.TM_CCOEFF)
 
 	if cv2.minMaxLoc(result)[1] >= max_val:
 		templateThresh = templateThres
@@ -75,10 +69,10 @@ for i in range(1, 16):
 		top_left = max_loc
 		bottom_right = (top_left[0] + w, top_left[1] + h)
 
-cv2.imshow("Thresh of Found Emoticon", templateThresh)
-cv2.imshow("Thresh of image", imageThresh)
+cv2.imshow("Thresh Found", templateThresh)
+cv2.imshow("Image Threshed", imageThresh)
 
-# cv2.rectangle(imageColor,top_left, bottom_right,(0,0,255),6)
+cv2.rectangle(imageColor,top_left, bottom_right,(0,0,255),6)
 cv2.imshow("Found Emoticon", foundEmoticon)
 cv2.imshow("Result", imageColor)
 cv2.waitKey(0)

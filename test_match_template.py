@@ -1,10 +1,15 @@
-# import the necessary packages
 import numpy as np
 import argparse
-# import imutils
 import cv2
- 
+"""
+Test code that uses OpenCV's matchTemplate to find an emoticon on an image 
+	and display the region found
+Image and emoticon sizes are not adjusted:
+	Test emoticon images are the approximate size of emoticons in the test sheet images 
+"""
+
 #python find_emoticon.py --page page.png --emoticon emoticon.png
+# EX: python find_emoticon.py --page testimg4.jpg --emoticon 1.png
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -15,8 +20,10 @@ ap.add_argument("-w", "--emoticon", required = True,
 args = vars(ap.parse_args())
  
 # load the page and emoticon images
+imageColor = cv2.imread(args["page"])
 page = cv2.imread(args["page"])
-emoticon = cv2.imread(args["emoticon"])
+emoticon = cv2.imread("Emojis/" + args["emoticon"])
+
 (emoticonHeight, emoticonWidth) = emoticon.shape[:2]
 
 # find the emoticon in the page

@@ -146,9 +146,9 @@ i, j = 0,3
 cv2.drawContours(img, [blocks[i][0],blocks[j][0]], -1, (255,0,0), 3)
 
 # cv2.drawContours(img, blockPairs, -1, (255,0,0), 3)
-# cv2.drawContours(img, triangles, -1, (255,0,0), 3)
-# cv2.drawContours(img, squares, -1, (0,255,0), 3)
-# cv2.drawContours(img, arrows, -1, (0,0,255), 3)
+cv2.drawContours(img, triangles, -1, (255,0,0), 3)
+cv2.drawContours(img, squares, -1, (0,255,0), 3)
+cv2.drawContours(img, arrows, -1, (0,0,255), 3)
 
 # cv2.drawContours(img, contours, -1, (0,255,0), 3)
 cv2.imshow('img',img)

@@ -2,25 +2,24 @@ import numpy as np
 import cv2
 
 """
-TODO: 
-Might use a block to find the best aspect ratio 
-Write for loop for several rotations
-	10 degrees?
-Normalize the average brightness of the image?
-	binarizing the image works for now
+Uses OpenCVs matchTemplate to find the emoticon in the image out of several possible emoicons
+Initially runs matchTemplate on several scaled versions of an emoticon before preserving
+	the size of the emoticon image that returned the best match
+Then runs matchTemplate with each emoticon with the predicted image dimensions
+Additionally: 
 """
 
-#TEMP FIX
+#Test emoticon
 emoticonPath = 'Emojis/1.png'
 template = cv2.imread(emoticonPath)
 
 #TEMP Taken image goes here
-imagePath = 'sheet4.jpg'
+imagePath = 'testimg4.jpg'
 image = cv2.imread(imagePath)
 imageColor = cv2.imread(imagePath)
 
 #Resize image taken and preserve image ratio
-width = 400.0
+width = 800.0
 r = float(width) / image.shape[1]
 dim = (int(width), int(image.shape[0] * r))
 image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
