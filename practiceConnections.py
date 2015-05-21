@@ -1,17 +1,21 @@
 import numpy as np
 import cv2
+"""
+
+"""
+
 
 minArea = 1000
 maxArea = 100000
 
-img = cv2.imread('sheet5.jpg')
+img = cv2.imread('testimg4.jpg')
 #Resize image taken and preserve image ratio
 width = 800.0
 r = float(width) / img.shape[1]
 dim = (int(width), int(img.shape[0] * r))
 img = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
 
-img2 = cv2.imread('sheet4.jpg')
+img2 = cv2.imread('testimg4.jpg')
 #Resize image taken and preserve image ratio
 width = 800.0
 r = float(width) / img.shape[1]

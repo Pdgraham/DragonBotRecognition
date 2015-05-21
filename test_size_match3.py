@@ -56,8 +56,8 @@ imageCropped = imageThresh[top_left[1] : bottom_right[1] ,
 cv2.imshow("Locally Searched Area",imageCropped)
 
 max_val = 0
-for i in range(1, 16):
-	emoticonPath = 'Emojis/' + str(i) + '.png'
+for i in range(1, 3):
+	emoticonPath = 'Emojisirl/' + str(i) + 'irl.png'
 	template = cv2.imread(emoticonPath)
 	template = cv2.resize(template, bestDim, interpolation = cv2.INTER_AREA)
 	templateGrey = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)

@@ -1,8 +1,9 @@
 import numpy as np
 import cv2
 import cv
+import scipy.spatial
 
-img = cv2.imread('sheet5.jpg')
+img = cv2.imread('testimg5.jpg')
 #Resize image taken and preserve image ratio
 width = 800.0
 minArea = 1000
@@ -109,48 +110,66 @@ for cnt in range(len(contours)):
 	elif len(contours[cnt]) == 4:
 		squares.append(contours[cnt])
 	else:
+		print cnt
+		pairs.append(contours[cnt])
 		rows,cols = imggray.shape[:2]
 		[vx,vy,x,y] = cv2.fitLine(contours[cnt], cv2.cv.CV_DIST_L2,0,0.01,0.01)
 		lefty = int((-x*vy/vx) + y)
 		righty = int(((cols-x)*vy/vx)+y)
+		leftx=cols-1
+		rightx=0
 		cv2.line(img,(cols-1,righty),(0,lefty),(0,255,0),2)
 		arrows.append(contours[cnt])
-		print lefty, righty, width
-		pairs += [(lefty-righty) /  float(width)]
+		# print lefty, righty, width
 
-print pairs
+		# pairs += [(lefty-righty) /  float(width)]
+
+# print pairs
+
+# print blocks[0]
+# print blocks[0][0]
+# # print np.linalg.eig(blocks[0][0])
+# print np.mean(blocks[0][0],0) 
+# quit()
 
 blockPairs = []
 for x in range(len(pairs)):
+	closestNodes = []
+	closestDistance = 10000
 	for i in range(len(blocks)):
 		for j in range(len(blocks)):
-			# print np.mean(blocks[j])
-			if blocks[i] is not blocks[j] and np.linalg.norm(blocks[j][0]) > np.linalg.norm(blocks[i][0]) and len(blocks[i]) == 2 and len(blocks[j]) ==2:
-				# print np.polyfit(blocks[x][0]/np.linalg.norm(blocks[x][0]),2)
-				# print blocks[i][0], blocks[j][0]
-				# print np.mean(blocks[i][0],0), np.mean(blocks[j][0],0)
-				# print (np.subtract(np.mean(blocks[i][0],0), (np.mean(blocks[j][0],0))) / np.linalg.norm( np.subtract(np.mean(blocks[i][0],0),np.mean(blocks[j][0])) ,axis = 0))[0][1] , "y"
-				# print i,j, "ugh"
-				if np.abs(np.subtract( pairs[x] , (np.subtract(np.mean(blocks[i][0],0), (np.mean(blocks[j][0],0))) / np.linalg.norm( np.subtract(np.mean(blocks[i][0],0),np.mean(blocks[j][0])) ,axis = 0))[0][0])) < .9:
-					# print (np.subtract(np.mean(blocks[i][0],0), (np.mean(blocks[j][0],0))) / np.linalg.norm( np.subtract(np.mean(blocks[i][0],0),np.mean(blocks[j][0])) ,axis = 0))[0][0] , "y"
-				
-					# print np.subtract( pairs[x] , (np.subtract(np.mean(blocks[i][0],0), (np.mean(blocks[j][0],0))) / np.linalg.norm( np.subtract(np.mean(blocks[i][0],0),np.mean(blocks[j][0])) ,axis = 0))[0][1])
-					print i,j
-					blockPairs.append(blocks[i][0])
-					blockPairs.append(blocks[j][0])
-i, j = 0,3
-# print np.mean(blocks[i][0],0)
-# for x in range(len(pairs)):
-	# print np.subtract( pairs[x] , (np.subtract(np.mean(blocks[i][0],0), (np.mean(blocks[j][0],0))) / np.linalg.norm( np.subtract(np.mean(blocks[i][0],0),np.mean(blocks[j][0])) ,axis = 0))[0][1])
-	# print "yes"
-cv2.drawContours(img, [blocks[i][0],blocks[j][0]], -1, (255,0,0), 3)
+
+			# print pairs[x]
+			# print "HIII"
+			if blocks[i] is not blocks[j] and len(blocks[i]) == 2 and len(blocks[j]) ==2:
+				tempSet = list(blocks[i][0]) + list(blocks[j][0])
+				# print np.mean(pairs[x],0), np.subtract(np.mean(tempSet,0))
+				# tempSet 
+				distance = np.linalg.norm(np.subtract(np.mean(pairs[x],0),np.subtract(np.mean(tempSet),0)))
+				# print distance, closestDistance
+				if distance < closestDistance:
+					closestNodes = [blocks[j][0],blocks[i][0]]
+					closestDistance = distance
+					k = [i,j]
+
+	if len(closestNodes) == 2:
+		blockPairs.append(closestNodes[0])
+		blockPairs.append(closestNodes[1])
+		
+
+
+		print k
+
+
+
+# cv2.drawContours(img, [blocks[1][0]], -1, (255,0,0), 3)
 
 # cv2.drawContours(img, blockPairs, -1, (255,0,0), 3)
-cv2.drawContours(img, triangles, -1, (255,0,0), 3)
+# cv2.drawContours(img, triangles, -1, (255,0,0), 3)
 cv2.drawContours(img, squares, -1, (0,255,0), 3)
-cv2.drawContours(img, arrows, -1, (0,0,255), 3)
+# cv2.drawContours(img, arrows, -1, (0,0,255), 3)
 
-# cv2.drawContours(img, contours, -1, (0,255,0), 3)
+cv2.drawContours(img, contours, -1, (0,255,0), 3)
 cv2.imshow('img',img)
 while True:
 	if cv2.waitKey(0)  == 27:
