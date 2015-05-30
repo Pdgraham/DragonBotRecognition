@@ -155,9 +155,7 @@ for x in range(len(pairs)):
 	if len(closestNodes) == 2:
 		blockPairs.append(closestNodes[0])
 		blockPairs.append(closestNodes[1])
-		
-
-
+	
 		print k
 
 
